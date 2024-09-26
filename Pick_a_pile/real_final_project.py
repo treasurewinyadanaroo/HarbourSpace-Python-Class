@@ -1,5 +1,3 @@
-import random
-
 game_data = {
     1: {
         "Pile 1": ("A red rose", 
@@ -35,12 +33,12 @@ def display_welcome():
 
 def display_piles(round_number):
     print(f"Round {round_number}:\n")
-    for pile, (item, _) in game_data[round_number].items():
-        print(f"{pile}: {item}")
-    
+    for pile in game_data[round_number]:
+        item = game_data[round_number][pile][0]
+
 def get_user_choice():
     while True:
-        chosen_pile = input("Choose a pile (Pile 1, Pile 2, Pile 3): ").
+        chosen_pile = input("Choose a pile (Pile 1, Pile 2, Pile 3): ")
         if chosen_pile in ["Pile 1", "Pile 2", "Pile 3"]:
             return chosen_pile
         else:
@@ -50,35 +48,55 @@ def display_interpretation(round_number, chosen_pile):
     item, interpretation = game_data[round_number][chosen_pile]
     print(f"\nYou chose {item}.")
     print(f"Interpretation: {interpretation}\n")
+    return (item, interpretation)  
 
-def play_round(round_number):
+def play_round(round_number, user_choices):
     display_piles(round_number)
     chosen_pile = get_user_choice()
-    display_interpretation(round_number, chosen_pile)
+    item, interpretation = display_interpretation(round_number, chosen_pile)
+    user_choices.append((round_number, chosen_pile, item, interpretation))
+
+def show_summary(user_choices):
+    print("\nHere is a summary of your choices:")
+    for round_number, pile, item, interpretation in user_choices:
+        print(f"Round {round_number} - {pile}: {item}")
+        print(f"Interpretation: {interpretation}\n")
 
 def pick_a_pile_game():
     display_welcome()
-    score = 0 
+    score = 0  
+    user_choices = [] 
     
     for round_number in range(1, 4):
-        play_round(round_number)
-        score += 1
-
-        print("-" * 30) 
+        play_round(round_number, user_choices)
+        score += 1 
+        print("-" * 100)  
 
     print(f"Your total score: {score}/3")
-    print("Thank you for playing the Pick a Pile Game!")
+    
+    if ask_summary():
+        show_summary(user_choices)
+    
+    print("Thank you for playing the Pick a Pile Game!🙏🙏🙏")
 
-def ask_replay():
+def ask_summary():
     while True:
-        replay = input("Do you want to play again? (yes/no): ").
-        if replay in ["yes", "no"]:
-            return replay == "yes"
+        summary = input("Do you want to see the summary of your choices? (yes/no): ")
+        if summary in ["yes", "no"]:
+            return summary == "yes"
         else:
             print("Please answer with 'yes' or 'no'.")
 
+def ask_replay():
+    while True:
+        replay = input("Do you want to play again? (yes/no): ")
+        if replay in ["yes", "no"]:
+            return replay == "yes"
+        
+        else:
+            print("Please answer with 'yes' or 'no'.")
 
 while True:
-    pick_a_pile_game()
-    if not ask_replay():
-        break
+        pick_a_pile_game()
+        if not ask_replay():
+            break
